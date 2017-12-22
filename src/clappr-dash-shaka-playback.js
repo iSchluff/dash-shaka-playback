@@ -176,7 +176,7 @@ class DashShakaPlayback extends HTML5Video {
   }
 
   isHighDefinitionInUse () {
-    return !!this.highDefinition
+    return false
   }
 
   stop () {
@@ -395,7 +395,7 @@ class DashShakaPlayback extends HTML5Video {
 
   _fillLevels () {
     if (this._levels.length === 0) {
-      this._levels = this.videoTracks.map((videoTrack) => { return {id: videoTrack.id, label: `${videoTrack.height}p`} }).reverse()
+      this._levels = this.videoTracks.slice(0).reverse()
       this.trigger(Events.PLAYBACK_LEVELS_AVAILABLE, this.levels)
     }
   }

@@ -352,7 +352,7 @@ var DashShakaPlayback = function (_HTML5Video) {
   }, {
     key: 'isHighDefinitionInUse',
     value: function isHighDefinitionInUse() {
-      return !!this.highDefinition;
+      return false;
     }
   }, {
     key: 'stop',
@@ -524,9 +524,7 @@ var DashShakaPlayback = function (_HTML5Video) {
     key: '_fillLevels',
     value: function _fillLevels() {
       if (this._levels.length === 0) {
-        this._levels = this.videoTracks.map(function (videoTrack) {
-          return { id: videoTrack.id, label: videoTrack.height + 'p' };
-        }).reverse();
+        this._levels = this.videoTracks.slice(0).reverse();
         this.trigger(_clappr.Events.PLAYBACK_LEVELS_AVAILABLE, this.levels);
       }
     }
@@ -595,8 +593,6 @@ var DashShakaPlayback = function (_HTML5Video) {
       }
 
       _clappr.Log.debug('an adaptation has happened:', activeVariant);
-      this.highDefinition = activeVariant.height >= 720;
-      this.trigger(_clappr.Events.PLAYBACK_HIGHDEFINITIONUPDATE, this.highDefinition);
       this.trigger(_clappr.Events.PLAYBACK_BITRATE, {
 <<<<<<< HEAD
         bandwidth: activeVideo.bandwidth,
