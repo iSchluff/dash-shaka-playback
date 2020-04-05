@@ -383,6 +383,13 @@ var DashShakaPlayback = function (_HTML5Video) {
       return (this.isReady && this._player.isLive() ? 'live' : 'vod') || '';
     }
   }, {
+    key: 'selectAudioLanguage',
+    value: function selectAudioLanguage(language) {
+      var role = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+      this._player.selectAudioLanguage(language, role);
+    }
+  }, {
     key: 'selectTrack',
     value: function selectTrack(track) {
       if (track.type === 'text') {
@@ -572,7 +579,7 @@ var DashShakaPlayback = function (_HTML5Video) {
   }, {
     key: '_onAdaptation',
     value: function _onAdaptation() {
-      var activeVideo = this.videoTracks.filter(function (t) {
+      var activeVariant = this.videoTracks.filter(function (t) {
         return t.active === true;
       })[0];
 
@@ -587,15 +594,23 @@ var DashShakaPlayback = function (_HTML5Video) {
         this._pendingAdaptationEvent = false;
       }
 
-      _clappr.Log.debug('an adaptation has happened:', activeVideo);
-      this.highDefinition = activeVideo.height >= 720;
+      _clappr.Log.debug('an adaptation has happened:', activeVariant);
+      this.highDefinition = activeVariant.height >= 720;
       this.trigger(_clappr.Events.PLAYBACK_HIGHDEFINITIONUPDATE, this.highDefinition);
       this.trigger(_clappr.Events.PLAYBACK_BITRATE, {
+<<<<<<< HEAD
         bandwidth: activeVideo.bandwidth,
         width: activeVideo.width,
         height: activeVideo.height,
         level: activeVideo.id,
         bitrate: activeVideo.videoBandwidth
+=======
+        bandwidth: activeVariant.bandwidth,
+        language: activeVariant.language,
+        width: activeVariant.width,
+        height: activeVariant.height,
+        level: activeVariant.id
+>>>>>>> add api for language switching
       });
     }
   }, {
@@ -621,6 +636,11 @@ var DashShakaPlayback = function (_HTML5Video) {
     key: 'textTracks',
     get: function get() {
       return this.isReady && this._player.getTextTracks();
+    }
+  }, {
+    key: 'audioLanguages',
+    get: function get() {
+      return this.isReady && this._player.getAudioLanguages();
     }
   }, {
     key: 'audioTracks',
