@@ -81,7 +81,8 @@ class DashShakaPlayback extends HTML5Video {
   }
 
   get presentationTimeline() {
-    return this.shakaPlayerInstance.getManifest().presentationTimeline
+    const manifest = this.shakaPlayerInstance.getManifest();
+    return manifest ? manifest.presentationTimeline : null;
   }
 
   get bandwidthEstimate() {
@@ -99,7 +100,10 @@ class DashShakaPlayback extends HTML5Video {
   }
 
   getProgramDateTime() {
-    return new Date((this.presentationTimeline.getPresentationStartTime() + this.seekRange.start) * 1000)
+    const presentationTimeline = this.presentationTimeline
+    if (!presentationTimeline)
+      return null;
+    return new Date((presentationTimeline.getPresentationStartTime() + this.seekRange.start) * 1000)
   }
 
   _updateDvr(status) {
@@ -365,10 +369,12 @@ class DashShakaPlayback extends HTML5Video {
   _onTimeUpdate() {
     if (!this.shakaPlayerInstance) return
 
+    const fragDateTime = this.getProgramDateTime();
+    if (!fragDateTime) return
     let update = {
       current: this.getCurrentTime(),
       total: this.getDuration(),
-      firstFragDateTime: this.getProgramDateTime()
+      firstFragDateTime: fragDateTime
     }
     let isSame = this._lastTimeUpdate && (
       update.current === this._lastTimeUpdate.current &&

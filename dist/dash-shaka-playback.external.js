@@ -212,7 +212,8 @@ var DashShakaPlayback = function (_HTML5Video) {
   }, {
     key: 'presentationTimeline',
     get: function get() {
-      return this.shakaPlayerInstance.getManifest().presentationTimeline;
+      var manifest = this.shakaPlayerInstance.getManifest();
+      return manifest ? manifest.presentationTimeline : null;
     }
   }, {
     key: 'bandwidthEstimate',
@@ -261,7 +262,9 @@ var DashShakaPlayback = function (_HTML5Video) {
   _createClass(DashShakaPlayback, [{
     key: 'getProgramDateTime',
     value: function getProgramDateTime() {
-      return new Date((this.presentationTimeline.getPresentationStartTime() + this.seekRange.start) * 1000);
+      var presentationTimeline = this.presentationTimeline;
+      if (!presentationTimeline) return null;
+      return new Date((presentationTimeline.getPresentationStartTime() + this.seekRange.start) * 1000);
     }
   }, {
     key: '_updateDvr',
@@ -494,10 +497,12 @@ var DashShakaPlayback = function (_HTML5Video) {
     value: function _onTimeUpdate() {
       if (!this.shakaPlayerInstance) return;
 
+      var fragDateTime = this.getProgramDateTime();
+      if (!fragDateTime) return;
       var update = {
         current: this.getCurrentTime(),
         total: this.getDuration(),
-        firstFragDateTime: this.getProgramDateTime()
+        firstFragDateTime: fragDateTime
       };
       var isSame = this._lastTimeUpdate && update.current === this._lastTimeUpdate.current && update.total === this._lastTimeUpdate.total;
       if (isSame) return;
@@ -577,7 +582,7 @@ var DashShakaPlayback = function (_HTML5Video) {
   }, {
     key: '_onAdaptation',
     value: function _onAdaptation() {
-      var activeVariant = this.videoTracks.filter(function (t) {
+      var activeVideo = this.videoTracks.filter(function (t) {
         return t.active === true;
       })[0];
 
@@ -592,21 +597,16 @@ var DashShakaPlayback = function (_HTML5Video) {
         this._pendingAdaptationEvent = false;
       }
 
-      _clappr.Log.debug('an adaptation has happened:', activeVariant);
+      _clappr.Log.debug('an adaptation has happened:', activeVideo);
+      this.highDefinition = activeVideo.height >= 720;
+      this.trigger(_clappr.Events.PLAYBACK_HIGHDEFINITIONUPDATE, this.highDefinition);
       this.trigger(_clappr.Events.PLAYBACK_BITRATE, {
-<<<<<<< HEAD
         bandwidth: activeVideo.bandwidth,
         width: activeVideo.width,
         height: activeVideo.height,
+        language: activeVideo.language,
         level: activeVideo.id,
         bitrate: activeVideo.videoBandwidth
-=======
-        bandwidth: activeVariant.bandwidth,
-        language: activeVariant.language,
-        width: activeVariant.width,
-        height: activeVariant.height,
-        level: activeVariant.id
->>>>>>> add api for language switching
       });
     }
   }, {
