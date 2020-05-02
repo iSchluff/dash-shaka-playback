@@ -1,11 +1,11 @@
 {
   "name": "@c3voc/dash-shaka-playback",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "description": "clappr dash playback based on shaka player",
   "main": "./dist/dash-shaka-playback.js",
   "repository": {
     "type": "git",
-    "url": "git@github.com:clappr/dash-shaka-playback.git"
+    "url": "git@github.com:iSchluff/dash-shaka-playback.git"
   },
   "scripts": {
     "build": "webpack",
